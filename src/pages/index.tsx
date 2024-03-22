@@ -1,33 +1,42 @@
 import { GetServerSideProps } from "next";
+import { useEffect, useState } from "react";
+import Login from "./components/Login";
 
-export const getServerSideProps: GetServerSideProps = async () => {
-  const CLIENT_ID = process.env.NEXT_PUBLIC_CLIENT_ID;
-  const CLIENT_SECRET = process.env.NEXT_PUBLIC_CLIENT_SECRET;
-  const REDIRECT_URI = process.env.NEXT_PUBLIC_REDIRECT_URI;
+export default function Home() {
+  const [parsedUserData, setParsedUserData] = useState<any>();
+  const [isLogged, setIsLogged] = useState<boolean>(false);
+  useEffect(() => {
+    const access_token = localStorage.getItem("accessToken");
+    setIsLogged(!!access_token);
 
-  return {
-    props: {
-      CLIENT_ID,
-      CLIENT_SECRET,
-      REDIRECT_URI,
-    },
-  };
-};
+    const userData = localStorage.getItem("user");
+    if (userData) {
+      setParsedUserData(JSON.parse(userData));
+    }
+  }, []);
 
-export default function Home({
-  CLIENT_ID,
-  REDIRECT_URI,
-}: {
-  CLIENT_ID: string;
-  REDIRECT_URI: string;
-}) {
+  if (isLogged) {
+    return (
+      <>
+        <h1>Hello {parsedUserData.login}</h1>
+        <img src={parsedUserData.avatar_url} />
+        <p>{parsedUserData.bio}</p>
+        <button
+          onClick={() => {
+            localStorage.removeItem("user");
+            localStorage.removeItem("accessToken");
+            setIsLogged(false);
+          }}
+        >
+          Logout
+        </button>
+      </>
+    );
+  }
+
   return (
     <>
-      <a
-        href={`https://github.com/login/oauth/authorize?client_id=${CLIENT_ID}&redirect_uri=${REDIRECT_URI}&scope=repo`}
-      >
-        Sign in with GitHub
-      </a>
+      <Login />
     </>
   );
 }

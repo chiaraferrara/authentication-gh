@@ -1,5 +1,6 @@
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
+import Session from "./components/Session";
 
 export async function getServerSideProps({ query }: { query: any }) {
   const code = query.code;
@@ -56,46 +57,53 @@ export async function getServerSideProps({ query }: { query: any }) {
 
 export default function Login({
   userData,
+  accessToken,
   error,
 }: {
   userData: any;
+  accessToken: any;
   error: any;
 }) {
-  const router = useRouter();
-  const code = router.query.code;
+  // const router = useRouter();
+  // const code = router.query.code;
 
-  const [user, setUser] = useState<any>(null);
+  // const [user, setUser] = useState<any>(null);
 
-  useEffect(() => {
-    if (userData) {
-      localStorage.setItem("user", JSON.stringify(userData));
-      const userInfos: any = localStorage.getItem("user");
-      setUser(JSON.parse(userInfos));
-    }
-  }, [code]);
+  // useEffect(() => {
 
-  if (error) {
-    return <div>Error: {error}</div>;
-  }
+  //   if (userData) {
+  //     localStorage.setItem("user", JSON.stringify(userData));
+  //     localStorage.setItem("accessToken", accessToken);
+  //     const userInfos: any = localStorage.getItem("user");
+  //     setUser(JSON.parse(userInfos));
+  //   }
+  // }, [code]);
+
+  // if (error) {
+  //   return <div>Error: {error}</div>;
+  // }
 
   return (
-    <div>
-      {/* <pre>{JSON.stringify(userData, null, 2)}</pre> */}
-      {user && (
-        <div>
-          <h1>Benvenuto {user.login}</h1>
-          <img src={user.avatar_url} />
-          <p>{user.bio}</p>
-        </div>
-      )}
-      <button
-        onClick={() => {
-          localStorage.removeItem("user");
-          router.push("/");
-        }}
-      >
-        Logout
-      </button>
-    </div>
+    <>
+      <Session userData={userData} accessToken={accessToken} error={error} />
+    </>
+    // <div>
+    //   {/* <pre>{JSON.stringify(userData, null, 2)}</pre> */}
+    //   {user && (
+    //     <div>
+    //       <h1>Benvenuto {user.login}</h1>
+    //       <img src={user.avatar_url} />
+    //       <p>{user.bio}</p>
+    //     </div>
+    //   )}
+    //   <button
+    //     onClick={() => {
+    //       localStorage.removeItem("user");
+    //       router.push("/");
+    //     }}
+    //   >
+    //     Logout
+    //   </button>
+    // </div>
   );
 }
